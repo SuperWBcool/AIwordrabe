@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+    width: 100px;
+    height: 100px;
+    background-color: rgb(0, 255, 255);
+    
+}
+
+.fade-in {
+    animation: fadeIn 0.5s linear;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s linear forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+  </style>
+</head>
+<body>
+  <div class="container fade-in"></div>
+<button class="btn">remove</button>
+</body>
+
+<script>
+  const btn = document.querySelector('.btn');
+  const container = document.querySelector('.container');
+
+  btn.addEventListener('click', () => {
+      container.addEventListener('animationend', function() {
+          container.remove(); // 在动画结束后移除容器元素
+      })
+
+      container.classList.remove('fade-in');
+      container.classList.add('fade-out');
+  })
+</script>
+</html>

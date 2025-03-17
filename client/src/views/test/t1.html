@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手动抠图功能 - 移动端</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>手动抠图</h1>
+<p>点击并拖动手指删除图像的部分</p>
+
+<canvas id="canvas" width="100%" height="400"></canvas>
+<button id="download-btn">下载抠图后的图片</button>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const downloadButton = document.getElementById('download-btn');
+    
+    // 设置canvas的宽度和高度，适应移动端
+    canvas.width = window.innerWidth;
+    canvas.height = 400; // 设置固定高度为400px，或根据需要调整
+
+    // 加载图像
+    const img = new Image();
+    img.src = 'i2.jpg'; // 替换为你的图像路径
+    img.onload = function () {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+
+    // 设置擦除功能
+    let isErasing = false;
+    const eraseRadius = 10; // 圆形擦除区域的半径
+
+    // 触摸开始
+    canvas.addEventListener('touchstart', (e) => {
+        isErasing = true;
+        erase(e);
+    });
+
+    // 触摸移动
+    canvas.addEventListener('touchmove', (e) => {
+        if (isErasing) {
+            erase(e);
+        }
+        e.preventDefault(); // 防止页面滚动
+    });
+
+    // 触摸结束
+    canvas.addEventListener('touchend', () => {
+        isErasing = false;
+    });
+
+    // 擦除功能：绘制圆形擦除区域
+    function erase(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.touches[0].clientX - rect.left;
+        const y = e.touches[0].clientY - rect.top;
+
+        // 设置擦除区域为圆形
+        ctx.globalCompositeOperation = 'destination-out'; // 用来擦除
+        ctx.beginPath();
+        ctx.arc(x, y, eraseRadius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // 下载抠图后的图片
+    downloadButton.addEventListener('click', () => {
+        const dataURL = canvas.toDataURL(); // 将图像转换为Data URL
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = '抠图.png'; // 文件名
+        link.click(); // 自动触发下载
+    });
+</script>
+
+</body>
+</html>
