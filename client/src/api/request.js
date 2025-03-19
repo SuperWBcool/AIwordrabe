@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import router from '../router/index';
 
 // 创建 axios 实例
 const request = axios.create({
-  // baseURL: 'http://localhost:8090', // 后端接口基础地址
-  baseURL:'http://192.168.31.134:8090' 
+  baseURL: 'http://localhost:8090', // 后端接口基础地址
+  // baseURL:'http://120.78.127.146:8090' 
   // timeout: 9000 // 请求超时时间
 });
 
@@ -27,6 +28,7 @@ request.interceptors.response.use(
     if(/\/images/.test(response.request.responseURL)){
       return {data:response.data}
     }  
+    // code为 1 则代表正常取到数据
     if(response.data.code) return response.data;
     ElMessage.error(response.data.msg);
     return response.data
@@ -38,8 +40,9 @@ request.interceptors.response.use(
       switch (response.status) {
         case 401:
           // 未授权，清除本地存储的密钥
-          localStorage.removeItem('apiKey');
-          localStorage.removeItem('apiSecret');
+          localStorage.removeItem('token');
+          // localStorage.removeItem('apiSecret');
+          router.replace('/login');
           // 可以在这里添加重定向到登录页的逻辑
           break;
         case 403:
